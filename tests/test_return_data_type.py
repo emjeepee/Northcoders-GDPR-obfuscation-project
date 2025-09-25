@@ -1,5 +1,5 @@
 import pytest
-from src.return_data_type import return_data_type
+from obf_lib.return_data_type import return_data_type
 
 
 

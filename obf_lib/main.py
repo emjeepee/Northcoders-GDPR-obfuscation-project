@@ -1,5 +1,5 @@
-from obf_lib.return_data_type import return_data_type
-
+from obf_lib.return_data_type        import return_data_type
+from obf_lib.get_key_and_bucket_name import get_key_and_bucket_name
 
 
 
@@ -32,8 +32,26 @@ def obfuscate(input_dict: dict):
         obfuscated.
     """
 
+    # Get the file path string:
+    file_path = input_dict['file_to_obfuscate']
+
     # get the data type of the file
     # as a string (eg 'json'):
-    data_type = return_data_type(input_dict['file_to_obfuscate'])
+    data_type = return_data_type(file_path)
     
-    
+    bucket_key_list = get_key_and_bucket_name(file_path)
+    bucket_name = bucket_key_list[0]
+    key = bucket_key_list[1]
+
+
+    # Get the file from the 
+    # S3 bucket:
+    if data_type == 'csv':
+        key
+
+    if data_type == 'json':
+        key
+
+
+    if data_type == 'parquet':
+        key
