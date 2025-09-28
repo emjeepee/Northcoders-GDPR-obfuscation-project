@@ -17,13 +17,12 @@ def get_file(bucket: str, key: str):
           under which the S3 bucket stores 
           file that contains the data, 
           some of which will be 
-          obfuscated elsewhere.
+          obfuscated in a different
+          function.
 
     Returns:
         The file that the S3 bucket bucket  
         stores under the key key.
-    
-    
     """
     
 

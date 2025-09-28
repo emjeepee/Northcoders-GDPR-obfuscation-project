@@ -8,28 +8,34 @@ from obf_lib.get_key_and_bucket_name import get_key_and_bucket_name
 def obfuscate(input_dict: dict):
     """
     This function:
-        reads a file from S3 that is either 
-        a .csv file, a .json file or a .parquet 
-        file, obfuscates specified PII fields, 
-        and returns the modified file as a byte 
-        stream.
+        reads a file from an S3 bucket. The file 
+        is either 
+        a .csv file file, 
+        a .json file or 
+        a .parquet file.
+        This function obfuscates fields that 
+        contain personally identifiable 
+        information (PII) and returns the 
+        modified file as a byte stream.
     
     Args:
         input_dict: a dictionary that has these two 
             keys:
-              'file_to_obfuscate'. The value of this 
-                key is a string that represents the file 
-                path to the file that contains the data 
-                among which is the data to obfuscate.
-              pii_fields: The value of this key is a 
-                list of strings, each string being 
-                the name of the field that must be 
-                obfuscated. 
+              1) 'file_to_obfuscate'. The value of 
+                this key is a string that represents 
+                the file path to the file that 
+                contains the data (and among which 
+                is the data to obfuscate.
+              2) pii_fields: the value of this key 
+                is a list of strings, each string 
+                being the name of a field that code 
+                will obfuscate. 
+
     Returns:
-        A bytestream that represents a file that 
-        is similar to the file specified at the 
-        file path but in which the given fields are 
-        obfuscated.
+        A bytestream that represents a file 
+        similar to the file specified at the given
+        file path but with obfuscated data in the 
+        given fields.
     """
 
     # Get the file path string:
