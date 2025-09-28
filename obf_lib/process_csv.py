@@ -16,7 +16,7 @@ def process_csv(file, pii_fields):
     Arguments:
         file: the .csv file that previous 
           code has read from the S3 bucket.
-        pii_filed: a list of strings, each
+        pii_fields: a list of strings, each
           string being a field in the .csv
           file.
 
