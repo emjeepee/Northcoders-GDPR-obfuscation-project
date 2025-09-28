@@ -1,8 +1,9 @@
 from obf_lib.return_data_type        import return_data_type
 from obf_lib.get_key_and_bucket_name import get_key_and_bucket_name
-
-
-
+from obf_lib.get_file                import get_file
+from obf_lib.process_csv             import process_csv
+from obf_lib.process_json            import process_json
+from obf_lib.process_parquet         import process_parquet
 
 
 def obfuscate(input_dict: dict):
@@ -38,8 +39,20 @@ def obfuscate(input_dict: dict):
         given fields.
     """
 
+    # make lookup table:
+    lookup = {
+            "csv": process_csv,
+            "json": process_json,
+            "parquet": process_parquet
+             }
+
+
+
     # Get the file path string:
     file_path = input_dict['file_to_obfuscate']
+
+    # Get the names of the PII fields:
+    pii_fields = input_dict['pii_fields']
 
     # get the data type of the file
     # as a string (eg 'json'):
@@ -52,12 +65,11 @@ def obfuscate(input_dict: dict):
 
     # Get the file from the 
     # S3 bucket:
-    if data_type == 'csv':
-        key
+    file = get_file(bucket_name, key)
 
-    if data_type == 'json':
-        key
+    # obfuscate the data under 
+    # the given PII fields and
+    # return the file as a byte 
+    # stream:
+    return lookup[data_type](file, pii_fields)
 
-
-    if data_type == 'parquet':
-        key
