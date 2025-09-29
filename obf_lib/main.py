@@ -1,9 +1,10 @@
-from obf_lib.return_data_type        import return_data_type
-from obf_lib.get_key_and_bucket_name import get_key_and_bucket_name
-from obf_lib.get_csv_file            import get_csv_file
-from obf_lib.process_csv             import process_csv
-from obf_lib.process_json            import process_json
-from obf_lib.process_parquet         import process_parquet
+from obf_lib.return_data_type           import return_data_type
+from obf_lib.get_key_and_bucket_name    import get_key_and_bucket_name
+from obf_lib.get_csv_file               import get_csv_file
+from obf_lib.process_csv                import process_csv
+from obf_lib.process_json               import process_json
+from obf_lib.process_parquet            import process_parquet
+from obf_lib.make_csv_reader_and_writer import make_csv_reader_and_writer
 
 
 def obfuscate(input_dict: dict):
@@ -65,11 +66,14 @@ def obfuscate(input_dict: dict):
 
     # Get the file from the 
     # S3 bucket:
-    file = get_file(bucket_name, key)
+    file_content = get_csv_file(bucket_name, key)
+
+    # Make csv reader and writer:
+    rw_list = make_csv_reader_and_writer(file_content)
 
     # obfuscate the data under 
     # the given PII fields and
     # return the file as a byte 
     # stream:
-    return lookup[data_type](file, pii_fields)
+    # return lookup[data_type](file, pii_fields)
 
