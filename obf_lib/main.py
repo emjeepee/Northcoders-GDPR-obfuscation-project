@@ -68,8 +68,11 @@ def obfuscate(input_dict: dict):
     # S3 bucket:
     file_content = get_csv_file(bucket_name, key)
 
-    # Make csv reader and writer:
+    # Make list containing csv 
+    # reader and writer:
     rw_list = make_csv_reader_and_writer(file_content)
+
+    
 
     # obfuscate the data under 
     # the given PII fields and
