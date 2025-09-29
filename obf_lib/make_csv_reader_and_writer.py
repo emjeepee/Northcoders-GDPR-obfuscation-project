@@ -15,9 +15,10 @@ def make_csv_reader_and_writer(file_content):
         contents of a csv file.
 
     Returns:
-        A list the first member of which is 
-        a csv reader and the second member 
-        of which is a csv writer.
+        A list whose first member is a csv
+        reader, whose second member is a 
+        csv writer and whose third member 
+        is an empty stringIO object.
     
     
     """
@@ -28,4 +29,4 @@ def make_csv_reader_and_writer(file_content):
     writer = csv.DictWriter(output_stream, fieldnames=reader.fieldnames)
     writer.writeheader()
 
-    return [reader, writer]
+    return [reader, writer, output_stream]

@@ -5,7 +5,7 @@ import csv
 
 
 
-def process_csv(file_content, pii_fields):
+def process_csv(rw_list, pii_fields):
     """
     This function:
         looks in the passed-in file for 
