@@ -3,7 +3,7 @@ import pytest
 import os
 
 from moto import mock_aws
-from obf_lib.get_file import get_file
+from obf_lib.get_csv_file import get_csv_file
 
 
 
@@ -38,7 +38,23 @@ def general_setup():
             Body=csv_content.encode("utf-8")
                                  )    
 
-        yield mock_S3_client, bucket_name, key
+        yield bucket_name, key
+
+
+
+
+def test_returns_string(general_setup):
+    # Arrange:
+    (bucket_name, key) = general_setup
+    # expected = list # to ensure test can fail
+    expected = str
+
+    # Act:
+    file_content = get_csv_file(bucket_name, key)
+    result = type(file_content)
+
+    # Assert:
+    assert result == expected
 
 
 
@@ -46,18 +62,18 @@ def general_setup():
 
 def test_returns_correct_file(general_setup):
     # Arrange:
-    (mock_S3_client, bucket_name, key) = general_setup
+    (bucket_name, key) = general_setup
 
     # Act:
-    file = get_file(bucket_name, key)
+    file_content = get_csv_file(bucket_name, key)
 
     # Assert:
     # assert file.startswith("id,Name") # when uncommented ensures test is failable
-    assert file.startswith("id,name,email")
+    assert file_content.startswith("id,name,email")
     # assert "1,keith,keir@test.com" in file  # when uncommented ensures test is failable
-    assert "1,Keir,keir@test.com" in file
+    assert "1,Keir,keir@test.com" in file_content
     # assert "2,Kevin,kemi@test.com" in file  # when uncommented ensures test is failable
-    assert "2,Kemi,kemi@test.com" in file
+    assert "2,Kemi,kemi@test.com" in file_content
     # assert "3,Mooo,mukund@test.com" in file  # when uncommented ensures test is failable
-    assert "3,Mukund,mukund@test.com" in file
+    assert "3,Mukund,mukund@test.com" in file_content
     
