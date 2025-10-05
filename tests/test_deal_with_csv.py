@@ -26,11 +26,14 @@ def test_internal_files_called_correctly(general_setup):
         
         mock_gf.return_value = 'mock_gf_return'
         mock_mcraw.return_value = 'mock_mcraw_return'
+        mock_pc.return_value = 'mock_pc_return'
         
-        deal_with_csv(bucket, key, pii_fields)
+        return_val = deal_with_csv(bucket, key, pii_fields)
         
         mock_gf.assert_called_once_with(bucket, key)
         mock_mcraw.assert_called_once_with('mock_gf_return')
         mock_pc.assert_called_once_with('mock_mcraw_return', pii_fields)
+
+    assert return_val == 'mock_pc_return'
         
         
