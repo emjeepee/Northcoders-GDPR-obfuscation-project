@@ -3,12 +3,13 @@ from obf_lib.get_key_and_bucket_name    import get_key_and_bucket_name
 from obf_lib.deal_with_csv              import deal_with_csv
 from obf_lib.deal_with_json             import deal_with_json
 from obf_lib.deal_with_parquet          import deal_with_parquet
+from obf_lib.find_input_type            import find_input_type
 from obf_lib.func_lookup                import func_lookup
 
 
 
 
-def obfuscate(input_dict: dict):
+def obfuscate(input):
     """
     This function:
         reads a file from an S3 bucket. The file 
@@ -45,6 +46,10 @@ def obfuscate(input_dict: dict):
         file path but with obfuscated data in the 
         given PII fields.
     """
+
+    # ensure this function has a 
+    # Python dictionary to work on:
+    input_dict = find_input_type(input)
 
     # Get the file path string:
     file_path = input_dict['file_to_obfuscate']
