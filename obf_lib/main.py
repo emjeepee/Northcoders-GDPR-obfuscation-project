@@ -32,7 +32,7 @@ def obfuscate(input_dict: dict):
                 The value of this key takes this 
                 form: 
                 "s3://my_ingestion_bucket/new_data/file1.csv"
-              2) pii_fields: the value of this key 
+              2) 'pii_fields': the value of this key 
                 is a list of strings, each string 
                 being the name of a field under which 
                 peronally identifiable information 
@@ -61,7 +61,11 @@ def obfuscate(input_dict: dict):
     bucket = bucket_and_key[0]
     key = bucket_and_key[1]
 
-    # make bytestream:
+    # make bytestream. the following line 
+    # calls a function such as deal_with_csv()
+    # (as the file path passed in to this 
+    # function (ie main()) points to a .csv
+    # file):
     obf_byt_strm = func_lookup[data_type](bucket, key, pii_fields)
     
     # return bytestream:
