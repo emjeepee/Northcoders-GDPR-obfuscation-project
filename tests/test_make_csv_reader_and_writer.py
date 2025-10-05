@@ -1,6 +1,5 @@
 import pytest
 import csv
-import io
 
 from obf_lib.make_csv_reader_and_writer import make_csv_reader_and_writer
 
@@ -13,9 +12,9 @@ def general_setup():
     mock_headers = "id,name,email"
     
     # Define a class that the test to ensure 
-    # the function under test returns an 
-    # empty stringIO object can employ to ensure 
-    # the test fails:
+    # the function under test returns the correct 
+    # stringIO object will employ to ensure the
+    # test fails:
     class Fail_stringIO:
         def __init__(self):
             self.read = 'fail'

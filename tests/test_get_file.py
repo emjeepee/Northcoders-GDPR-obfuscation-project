@@ -3,7 +3,7 @@ import pytest
 import os
 
 from moto import mock_aws
-from obf_lib.get_csv_file import get_csv_file
+from obf_lib.get_file import get_file
 
 
 
@@ -50,7 +50,7 @@ def test_returns_string(general_setup):
     expected = str
 
     # Act:
-    file_content = get_csv_file(bucket_name, key)
+    file_content = get_file(bucket_name, key)
     result = type(file_content)
 
     # Assert:
@@ -65,7 +65,7 @@ def test_returns_correct_file(general_setup):
     (bucket_name, key) = general_setup
 
     # Act:
-    file_content = get_csv_file(bucket_name, key)
+    file_content = get_file(bucket_name, key)
 
     # Assert:
     # assert file.startswith("id,Name") # when uncommented ensures test is failable

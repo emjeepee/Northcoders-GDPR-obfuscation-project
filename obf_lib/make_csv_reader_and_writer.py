@@ -11,7 +11,7 @@ def make_csv_reader_and_writer(file_content):
         the contents of a csv file.
     
     Arguments:
-        file_contents: a string that is the 
+        file_content: a string that is the 
         contents of a csv file.
 
     Returns:

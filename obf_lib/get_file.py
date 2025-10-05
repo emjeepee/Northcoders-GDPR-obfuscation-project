@@ -3,18 +3,18 @@ import boto3
 
 
 
-def get_csv_file(bucket: str, key: str):
+def get_file(bucket: str, key: str):
     """
     This function:
         reads the S3 bucket, gets the 
-        csv file stored there under the 
+        file stored there under the 
         given key, converts the contents 
         of the file to a string and 
         returns the string.
     
     Args:
         bucket: a string that is the 
-          name of the bucket.
+          name of the S3 bucket.
         key: a string that is the key
           under which the S3 bucket stores 
           the file that contains the data, 
@@ -24,8 +24,8 @@ def get_csv_file(bucket: str, key: str):
 
     Returns:
         A string that is the contents of 
-        the file that S3 bucket bucket   
-        stores under key key.
+        the file that the given S3 bucket 
+        stores under the given key.
     """
     
 
