@@ -1,8 +1,5 @@
 from obf_lib.return_data_type           import return_data_type
 from obf_lib.get_key_and_bucket_name    import get_key_and_bucket_name
-from obf_lib.deal_with_csv              import deal_with_csv
-from obf_lib.deal_with_json             import deal_with_json
-from obf_lib.deal_with_parquet          import deal_with_parquet
 from obf_lib.find_input_type            import find_input_type
 from obf_lib.func_lookup                import func_lookup
 
