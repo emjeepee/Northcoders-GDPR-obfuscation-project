@@ -51,26 +51,23 @@ def obfuscate(input):
     # Python dictionary to work on:
     input_dict = find_input_type(input)
 
-    # Get the file path string:
-    file_path = input_dict['file_to_obfuscate']
-
-    # Get the names of the PII fields:
-    pii_fields = input_dict['pii_fields']
+    # Get the file path string and :
+    # the names of the PII fields:
+    file_path, pii_fields = input_dict['file_to_obfuscate'], input_dict['pii_fields']
 
     # get the data type of the file
     # as a string (eg 'csv', 'json' or 'parquet'):
     data_type = return_data_type(file_path)
     
     # get the bucket name and key name:
-    bucket_and_key = get_key_and_bucket_name(file_path)
-    bucket = bucket_and_key[0]
-    key = bucket_and_key[1]
+    bucket, key = get_key_and_bucket_name(file_path)
 
     # make bytestream. the following line 
-    # calls a function such as deal_with_csv()
-    # (as the file path passed in to this 
-    # function (ie main()) points to a .csv
-    # file):
+    # employs lookup table func_lookup
+    # to call a specific function 
+    # depending on the value of 
+    # data_type, passing the function 
+    # the arguments bucket, key and pii_fields:
     obf_byt_strm = func_lookup[data_type](bucket, key, pii_fields)
     
     # return bytestream:
