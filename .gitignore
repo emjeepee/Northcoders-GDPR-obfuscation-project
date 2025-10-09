@@ -1,4 +1,3 @@
-**/serverless-output.*
 **/.DS_Store
 temp/
 .DS_Store
@@ -12,12 +11,5 @@ temp/
 **/*pycache
 *coverage*
 venv/
-*.zip
-**/.terraform*
-*.tfstate*
-*.tfstate.backup
-*.tfvars*
-.env
-otherDocs
-layer/python
-layer.zip
+
+.pytest_cache
