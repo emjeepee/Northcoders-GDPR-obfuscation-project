@@ -8,7 +8,7 @@
 
 
 ## Description <br>
-This project creates a Python library module that will obfuscate personally identifiable information (PII) stored under certain fields in a given file. <br> <br>
+This project creates a Python library that will search through a given file for personally identifiable information (PII) stored under given fields and obfuscate the data under those fields. <br> <br>
 The calling procedure will supply this module with a json string that takes the following form:  <br>
 ```
 """
