@@ -1,7 +1,7 @@
-from obf_lib.return_data_type import return_data_type
-from obf_lib.get_key_and_bucket_name import get_key_and_bucket_name
-from obf_lib.find_input_type import find_input_type
-from obf_lib.func_lookup import func_lookup
+from .return_data_type import return_data_type
+from .get_key_and_bucket_name import get_key_and_bucket_name
+from .find_input_type import find_input_type
+from .func_lookup import func_lookup
 
 
 def obfuscate(input):

@@ -1,4 +1,4 @@
-from obf_lib.get_file import get_file
+from .get_file import get_file
 
 
 def deal_with_parquet(bucket, key, pii_fields):

@@ -1,5 +1,5 @@
-from obf_lib.get_file import get_file
-from obf_lib.process_json import process_json
+from .get_file import get_file
+from .process_json import process_json
 
 
 def deal_with_json(bucket, key, pii_fields):

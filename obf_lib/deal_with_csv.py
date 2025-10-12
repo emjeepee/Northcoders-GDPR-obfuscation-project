@@ -1,6 +1,6 @@
-from obf_lib.get_file import get_file
-from obf_lib.make_csv_reader_and_writer import make_csv_reader_and_writer
-from obf_lib.process_csv import process_csv
+from .get_file import get_file
+from .make_csv_reader_and_writer import make_csv_reader_and_writer
+from .process_csv import process_csv
 
 
 def deal_with_csv(bucket, key, pii_fields):
