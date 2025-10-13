@@ -14,20 +14,20 @@ The calling procedure will supply this module with a json string that takes the 
 """
 {
 	"file_to_obfuscate": "s3://my_ingestion_bucket/new_data/file1.csv", 
-	"pii_fields": ["name", "email"]
+	"pii_fields": ["<some header>", "<some other header>", etc]
 }
 """ 
 ```
 <br> <br>
-The value of key "file_to_obfuscate" is a string representing a path to the file in an Amazon Web Services (AWS) S3 bucket and comprises these parts: <br>
+The value of key "file_to_obfuscate" in the json string is a string representing a path to the file in an Amazon Web Services (AWS) S3 bucket and comprises these parts: <br>
 
- - __'my_ingestion_bucket'__ is the name of the S3 bucket. <br>
- - __'new_data/file1.csv'__ is the name of the key under which the S3 bucket stores the file. <br>
- - __'file1.csv'__ is the name of the file that contains fields, some of which have data to be obfuscated.<br><br>
+ - __'my_ingestion_bucket'__ is the name of the S3 bucket <br>
+ - __'new_data/file1.csv'__ is the name of the key under which the S3 bucket stores the file <br>
+ - __'file1.csv'__ is the name of the file that contains some PII fields, the data under which this library will  obfuscate.<br><br>
 
-The value of key "pii_fields" is a list of strings, each of which represents a field in file file1.csv whose data this module must obfuscate.
+The value of key "pii_fields" in the json string is a list of strings, each of which represents a field in file file1.csv whose data this module must obfuscate.
 <br> <br>
-This module obfuscates the data in file file1.csv under the specified PII fields then converts the file into a bytestream. This module then returns that bytestream.
+This module obfuscates data in file file1.csv under the specified PII fields then converts the file into a bytestream. This module then returns that bytestream.
 <br> <br> <br>
 
 
@@ -36,13 +36,13 @@ This project includes the following main directories:
  - __obf_lib__ <br> this contains module main.py, which contains function obfuscate().
    Function obfuscate() calls several utility functions, all of which reside
    in modules in directory obf_lib. Each utility function resides in a module of the same name, for example function process_csv() resides in module process_csv.py. 
- - __tests__ <br> this contains test_\*.py files, where '\*' is the name of a function to test. An example file is test_process_csv().py, which contains the tests for the function process_csv().
+ - __tests__ <br> this contains test_\*.py files, where '\*' is the name of a function to test. An example file is test_process_csv.py, which contains the tests for the function process_csv().
  <br><br><br>
 
 
 
 ## Author
-- Mukund Pandit <br>  __email__: mukund.panditman.googlemail.com
+- Mukund Pandit <br>  __email__: mukund.panditman@googlemail.com
 
 <br><br>
 
@@ -53,17 +53,18 @@ This project includes the following main directories:
 Instructions for setup and use of this library:  <br>
 - view this GitHub repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
 - find directory obf_lib in that repository and copy that directory into your project
-- then import the library into a Lambda handler function or any module in your project where you want to use it, like this:
+- then import function obfuscate() of the library into any module in your project, like this:
   <br>
 ```
 from <path.to.directory.obf_lib> import obfuscate
 ```
 
-- example use of the library in a Lambda handler Python function or any Python module:
+- example use of the library in a Python module (perhaps a handler for an AWS Lambda function):
 ```
+import json
 from <path.to.directory.obf_lib> import obfuscate
 
-json_input = '{"file_to_obfuscate": "s3://bucket_name_here/key_name/file.csv", "pii_fields": ["name", "email"]}'
+json_input = json.dumps({'file_to_obfuscate': 's3://bucket_name_here/key_name/file.csv', 'pii_fields': ["name", "email"]})
 
 # obf_byte_stream below contains a byte stream 
 # version of file file.csv but with data under 
@@ -81,8 +82,8 @@ obf_byte_stream = obfuscate(json_input)
 
 ## Tech Stack
 
- - Code: Python 3.13.2
- - Built-in Python modules json, io, csv, os 
+ - Code: Python 3.13.2 (but see __Compatibility with Python versions__ below)
+ - Built-in Python modules: json, io, csv, os 
  - Other Python modules: boto3
  - Built-in Python testing modules: unittest
  - Other Python testing modules: pytest, moto 
@@ -234,9 +235,80 @@ obf_lib/deal_with_parquet.py:1:1: F401 'obf_lib.get_file.get_file' imported but 
 <br> 
 Explanation of why the flake8 warnings are not of concern: <br>
 
-- module obf_lib/__init__.py must import main.obfuscate to allow the library to be used as a library. __init__.py is not meant to employ funtion main.obfuscate.  
+- module obf_lib/___init___.py must import main.obfuscate to allow the library to be used as a library. ___init___.py is not meant to employ function main.obfuscate.  
 - modules obf_lib/deal_with_json.py and obf_lib/deal_with_parquet.py contain only stubbs of functions. This project does not employ those functions and those functions are not part of the MVP.
 
 <br><br>
+
+
+## Meeting file size and runtime requirements<br>
+
+The tool must be able to handle files of size up to 1MB with a runtime of less than 1minute. 
+
+To ensure the tool met these requirements a separate project tested the tool in this way: <br>
+ - the separate project created an AWS Lambda function handler that called function obfuscate() of library obf_lib
+ - the separate project wrote the Lambda handler such that it passed in to function obfuscate() an argument that was a json string with two keys, the first having a value that was a boto3-recognisable path to a 1Mb .csv file in an S3 bucket, the second having a value that was a list of fields whose data was to be obfuscated
+ - the separate project test ran the Lambda handler 10 times in AWS, looking at the duration of the Lambda handler in the response that the AWS Lambda service provided
+ - The partial responses of the 10 test runs are: <br>
+```
+ REPORT RequestId: bde85ccd-bbde-4654-a1ea-d777645e3d77	Duration: 5142.55 ms	Billed Duration: 5466 ms	Memory Size: 128 MB	Max Memory Used: 95 MB  <br>
+ ```
+```
+ REPORT RequestId: 469ba4c5-6b9a-4a16-bb50-ed48b054e135	Duration: 5808.90 ms	Billed Duration: 6094 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: 75864d4e-063d-4ad3-ad69-e8724720c36d	Duration: 2671.69 ms	Billed Duration: 2672 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: f1c1fe0a-5812-43e2-b64c-4bff9ad619a1	Duration: 2273.14 ms	Billed Duration: 2274 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: a377847b-4c81-4206-97c1-19785fa51b29	Duration: 2339.19 ms	Billed Duration: 2340 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: 7773f1d9-f7ec-46ed-9d85-73d6aa9cbc7b	Duration: 2909.21 ms	Billed Duration: 2910 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: 26041b46-eb56-4787-856d-be5504bdd9c7	Duration: 2750.08 ms	Billed Duration: 2751 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: e5b31420-cc02-49a2-b7cb-81e73d0484e6	Duration: 2668.10 ms	Billed Duration: 2669 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: 40eb64ad-3afc-4e43-bb8c-0312d850c577	Duration: 2687.11 ms	Billed Duration: 2688 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+ ```
+```
+ REPORT RequestId: fede1fa8-ba3d-42be-8e27-fe8f7c964369	Duration: 2331.04 ms	Billed Duration: 2332 ms	Memory Size: 128 MB	Max Memory Used: 97 MB  <br>
+```
+  
+<br>
+
+The average value for 'Duration' over the 10 test runs in the figures above is 3158.1 ms, meeting the requirements for a runtime of under 1minute. If the Lambda function had run from cold starts this would have added less than 1second to the running time of the function and the library would still meet the runtime requirement. <br>
+
+
+ <br> <br> <br>
+
+
+
+
+
+## Demonstration of the library by running it from the command line <br>
+
+To run the library from the command line do this:  <br>
+ - create an S3 bucket in an AWS account and save file file1.csv in it (the file is at the top level of this project). file1.csv is a 1Mb file with these headers: name, email_address, age, height and weight followed by many lines of data. Save the file in the S3 bucket under some key, eg new_data/file1.csv 
+ - ensure that your AWS account or entity has the correct permissions to allow S3 bucket read operations
+ - ensure that your AWS credentials on your local machine are correct
+ - clone this GitHub repository to your local machine: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
+ - in top-level directory GDPR-PROJECT-SEPT-OCT-25 is file input.json. Change the contents so that the value of the key "file_to_obfuscate" is a boto3 path to file file1.csv in your S3 bucket. Also change the fields that you want to obfuscate (ie change the value of the second key "pii_fields")
+ - in the command line navigate to top-level directory GDPR-PROJECT-SEPT-OCT-25
+ - run this command: <br>
+ ```
+         python run_obfuscate.py input.json
+ ```
+ - module run_obfuscate.py calls library function obfuscate() 
+ - the output of function run_obfuscate() in the command line shows up to five consecutive rows of the bytestream output of function obfuscate() of the library, starting at some randomly chosen row
+ - you can change the headers and data of file1.csv to suit your needs. At the same time you must change the value of the second key ("pii_fields") in file input.json accordingly
+
+
 
 

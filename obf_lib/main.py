@@ -18,28 +18,34 @@ def obfuscate(input):
         modified file as a byte stream.
 
     Args:
-        input_dict: a dictionary with these two
-            keys:
-              1) 'file_to_obfuscate'. The value of
+        input: can be either a dictionary or a 
+          json string as long as it has these 
+          two keys:
+              1) "file_to_obfuscate". The value of
                 this key is a string that represents
-                the file path to the file that
-                contains the data (and among which
-                is the data to obfuscate).
-                The value of this key takes this
-                form:
-                "s3://my_ingestion_bucket/new_data/file1.csv"
-              2) 'pii_fields': the value of this key
+                the path to the file that contains 
+                the data (among which is the data 
+                to obfuscate). The path must take 
+                this form:
+                "s3://my_ingestion_bucket/new_data/file1.csv",
+                where 'my_ingestion_bucket' is the 
+                name of the S3 ingestion bucket and 
+                "new_data/file1.csv" is the keey 
+                under which the bucket stores file 
+                file1.csv
+              2) "pii_fields": the value of this key
                 is a list of strings, each string
                 being the name of a field under which
-                peronally identifiable information
-                (PII) is stored that this function
+                personally identifiable information
+                (PII) resides that this function
                 must obfuscate.
 
     Returns:
         A bytestream that represents a file
-        similar to the file specified at the given
-        file path but with obfuscated data in the
-        given PII fields.
+        similar to the file at the given file
+        path but with obfuscated data under the
+        given PII fields (this function replaces
+        the data under the PII fields with '***').
     """
 
     # ensure this function has a
