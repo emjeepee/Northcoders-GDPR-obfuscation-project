@@ -294,11 +294,11 @@ The average value for 'Duration' over the 10 test runs in the figures above is 3
 
 ## Demonstration of the library by running it from the command line <br>
 
-To run the library from the command line do this:  <br>
+To run the library demonstration from the command line do this:  <br>
+ - clone this GitHub repository to your local machine: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
  - create an S3 bucket in an AWS account and save file file1.csv in it (the file is at the top level of this project). file1.csv is a 1Mb file with these headers: name, email_address, age, height and weight followed by many lines of data. Save the file in the S3 bucket under some key, eg new_data/file1.csv 
  - ensure that your AWS account or entity has the correct permissions to allow S3 bucket read operations
  - ensure that your AWS credentials on your local machine are correct
- - clone this GitHub repository to your local machine: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
  - in top-level directory GDPR-PROJECT-SEPT-OCT-25 is file input.json. Change the contents so that the value of the key "file_to_obfuscate" is a boto3 path to file file1.csv in your S3 bucket. Also change the fields that you want to obfuscate (ie change the value of the second key "pii_fields")
  - in the command line navigate to top-level directory GDPR-PROJECT-SEPT-OCT-25
  - run this command: <br>
@@ -307,7 +307,7 @@ To run the library from the command line do this:  <br>
  ```
  - module run_obfuscate.py calls library function obfuscate() 
  - the output of function run_obfuscate() in the command line shows up to five consecutive rows of the bytestream output of function obfuscate() of the library, starting at some randomly chosen row
- - you can change the headers and data of file1.csv to suit your needs. At the same time you must change the value of the second key ("pii_fields") in file input.json accordingly
+ - you can change the headers and data of file1.csv. At the same time you must change the value of the second key ("pii_fields") in file input.json accordingly
 
 
 
