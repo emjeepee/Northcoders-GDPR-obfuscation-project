@@ -64,6 +64,8 @@ This project includes the following main directories:
 Instructions for setup and use of this library:  <br>
 - clone this GitHub repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
 - on your local machine find directory obf_lib in the cloned project and copy that directory into your project. 
+- for use of the library on a local machine (rather than in a Lambda function in AWS) install boto3 by running this in the command line:
+```pip install boto3``` 
 - import function obfuscate() of library obf_lib into any module in your project, like this:
   <br>
 ```
