@@ -7,7 +7,61 @@ import csv
 
 from obf_lib import obfuscate
 
+
+
+
+
 def run_obfuscate():
+    '''
+    This function:
+        1) demonstrates the use of library
+         obf_lib (specifically the library's 
+         function obfuscate()).
+         The user should run the following in 
+         the command line:
+         python run_obfuscate.py input.json
+         where input.json is a file in the
+         same directory as this module and 
+         contains a dictionary that takes
+         a form similar to this:
+          {
+  "file_to_obfuscate": "s3://my-ingestion-bucket/new_data/file1.csv",
+  "pii_fields": ["name", "email_address"]  
+          }. 
+        The value of key "file_to_obfuscate"
+        must be a string that is a 
+        boto3-recognisable path to a .csv 
+        file in an S3 bucket. The file must 
+        contain headers and data below those 
+        headers.
+        The file must be saved under the key 
+        new_data/file1.csv.
+        Replace 'my-ingestion-bucket' with the 
+        actual name of the S3 bucket.
+        The value of key "pii_fields" is a list
+        of the headers in the file below which 
+        personably identifiable information must
+        be obfuscated by function obfuscate(). 
+        2) displays in the command line either:
+            i)  the result of the use of function 
+                obfuscate(). The display shows
+                the headers in the bytestream that
+                obfuscate() returns and 10 randomly 
+                selected rows from the bytestream
+            ii) error messages if, for example, 
+                the user has not provided an 
+                argument to the command line 
+                command
+
+    Arguments:
+        none
+
+    Returns:
+        None                 
+
+    '''
+
+
     # Text colors
     RED = "\033[31m"
     GREEN = "\033[32m"
@@ -16,15 +70,12 @@ def run_obfuscate():
     PURPLE = "\033[35m"
     RESET = "\033[0m"  # Reset colour to default
 
-    # print(RED + "This is red" + RESET)
-    # print(GREEN + "This is green" + RESET)
-    # print(YELLOW + "This is yellow" + RESET)
-    # print(BLUE + "This is blue" + RESET)
-
-
     # show user an error message 
-    # if the number of arguments 
-    # to run_obfuscate.py is not 1:  
+    # if in the command line the number of 
+    # arguments to command 
+    # python run_obfuscate.py 
+    # is not 1. the argument must be a 
+    # .json file):  
     if len(sys.argv) != 2: # the first arg is run_obfuscate.py, hence '2' in this line
         print(RED + "\n \nIncorrect number of arguments to" + YELLOW + " run_obfuscate.py\n" + RESET)
         print(RED + "Run this in the command line: " + YELLOW + "\nrun_obfuscate.py <path_to_json_file>\n" + RESET)
@@ -47,12 +98,11 @@ def run_obfuscate():
     try:
         with open(json_file_path, "r", encoding="utf-8") as f:
             input_data = json.load(f)
+            pii_fileds = input_data['pii_fields']
         # tell user that the input data
         # has been loaded successfully: 
         print(GREEN)
         print('****---***---****---***---****---***---****')
-        print(YELLOW)
-        print(f"\n\nInput successfully loaded from '{json_file_path}'")
         print(RESET)
             
     except json.JSONDecodeError as e:
@@ -73,9 +123,6 @@ def run_obfuscate():
         print(RESET)
         sys.exit(1)
 
-    # get a random line from the
-    # byte stream:
-
     # make byt_str a file-like object:
     byt_str_file = io.BytesIO(result)        
     # reset and wrap the byte stream:
@@ -88,8 +135,10 @@ def run_obfuscate():
     # count lines (excluding header):
     line_count = sum(1 for _ in text_stream) - 1
 
-    # pick a random line number:
-    rand_line = random.randint(1, line_count)
+    # pick 10 unique random line numbers
+    # and sort them:
+    rand_lines = random.sample(range(1, line_count + 1), 10)
+    rand_lines = sorted(rand_lines)
 
     # rewind stream
     text_stream.seek(0)    # reset stream and read again:
@@ -106,23 +155,19 @@ def run_obfuscate():
     print('')
     print(f"\nFunction obfuscate() of library obf_lib \nreturned a byte stream of length \n{len(result)} bytes.")
     print(YELLOW)
-    print(f"Here is a print out of the headers and \nup to five consecutive rows from the byte \nstream returned by function obfuscate() \nbeginning with randomly chosen row number \n{rand_line}. The obfuscated data appears under \nthe correct fields:")
+    print(f"Below is a printout of the headers and \n10 random rows from the byte stream \nreturned by function obfuscate() of \nlibrary obf_lib. It shows that the \nobfuscated data appears under the \ncorrect fields. You chose to obfuscate \ndata under these fields \n{pii_fileds}:")
     # join headers with commas for a neat single-line print
     print(PURPLE)
     print("          ".join(headers))
     print(BLUE)
     for i, row in enumerate(reader, start=1):
-        if i == rand_line:
-            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {rand_line}') 
-        if i == rand_line + 1:
-            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {rand_line+1}') 
-        if i == rand_line + 2:
-            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {rand_line+2}') 
-        if i == rand_line + 3:
-            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {rand_line+3}') 
-        if i == rand_line + 4:
-            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {rand_line+4}') 
-    
-            break
+        if i in rand_lines:
+            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {i}') 
     print(RESET)
+
+
+
+
+
+
 run_obfuscate()

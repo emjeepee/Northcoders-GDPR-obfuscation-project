@@ -1,4 +1,4 @@
 {
   "file_to_obfuscate": "s3://gdpr-obfus-my-ingestion-bucket-ga47fmw2/new_data/file1.csv",
-  "pii_fields": ["name", "email_address", "weight"]  
+  "pii_fields": ["name", "email_address"]  
 }

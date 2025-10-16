@@ -13,3 +13,13 @@ temp/
 venv/
 
 .pytest_cache
+
+
+# Ignore local Terraform files:
+*.tfstate
+*.tfstate.backup
+**/.terraform/
+**/.terraform.lock.hcl
+
+**/*.tfstate
+**/*.tfstate.*
