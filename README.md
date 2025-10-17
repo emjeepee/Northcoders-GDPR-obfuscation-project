@@ -350,9 +350,9 @@ export PYTHONPATH=$(pwd)
  - ensure that the ingestion bucket contains a .csv file saved under a known key. The file should contain headers and at least 10 rows of data beneath those headers 
  - change the contents of file input.json so that the value of the key "file_to_obfuscate" is a boto3 path to the .csv file in your S3 bucket. 
  - change the contents of file input.json so that the value of the key "pii_fields" is a list of the fields whose data you want to obfuscate
- - in the command line navigate to directory requirements-tests and run ```python run_obfuscate.py input.json```
+ - in the command line navigate to directory requirements-tests and run <br> ```python -m requirements-tests.run_obfuscate requirements-tests/input.json```
  - module run_obfuscate.py calls library obf_lib's function obfuscate() and shows its output in the command line. The display shows the headers and 10 randomly selected rows of the bytestream returned by function obfuscate() 
- - you can change the PII fields in input.json and run ```python run_obfuscate.py input.json``` again to get a different output in the command line demonstration in which the new fields have their data obfuscated.
+ - you can change the PII fields in input.json and run  <br> ```python -m requirements-tests.run_obfuscate requirements-tests/input.json``` <br>  again to get a different output in the command line demonstration in which the new fields have their data obfuscated.
 
 <br><br>
 

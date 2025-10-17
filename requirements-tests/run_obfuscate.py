@@ -162,7 +162,8 @@ def run_obfuscate():
     print(BLUE)
     for i, row in enumerate(reader, start=1):
         if i in rand_lines:
-            print(f'{row['name']}             {row['email_address']}                  {row['age']}            {row['height']}           {row['weight']}     ROW {i}') 
+            row_values = "               ".join(str(row[field]) for field in reader.fieldnames)
+            print(f"{row_values}             ROW {i}")    
     print(RESET)
 
 
