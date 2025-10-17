@@ -8,11 +8,12 @@
 
 
 ## Description <br>
-This project 
- - creates Python library obf_lib that will search through a .csv file at a given path for personally identifiable information (PII) stored under given fields 
+This project creates Python library obf_lib that will 
+ - search through a .csv file at a given path for personally identifiable information (PII) stored under given fields 
  - obfuscate that data 
  - return the changed contents of the file in the form of a byte stream. <br> <br> <br>
-The calling procedure will supply library obf_lib with a json string that takes a form similar to this:  <br>
+The calling procedure will supply function obfuscate() of library obf_lib with a json string that has two keys: "file_to_obfuscate" and "pii_fields". <br>
+The json string takes a form similar to this:  <br>
 ```
 """
 {
@@ -22,7 +23,7 @@ The calling procedure will supply library obf_lib with a json string that takes 
 """ 
 ```
 <br> <br>
-The value of key "file_to_obfuscate" in the json string above is a string of the kind recognised by Python third-party library boto3 and represents a path to a file that contains data to be obfuscated. The file resides in an Amazon Web Services (AWS) S3 bucket. This is a breakdown of the parts of the string: <br>
+The value of key "file_to_obfuscate" is a string of the kind recognised by Python third-party library boto3 and represents a path to a file that contains data to be obfuscated. The file resides in an Amazon Web Services (AWS) S3 bucket. This is a breakdown of the parts of the string: <br>
 
  - __'my_ingestion_bucket'__ is the name of the S3 bucket <br>
  - __'new_data/file1.csv'__ is the name of the key under which the S3 bucket stores the file <br>
@@ -30,7 +31,7 @@ The value of key "file_to_obfuscate" in the json string above is a string of the
 
 The value of key "pii_fields" in the json string is a list of strings, each of which represents a field in file file1.csv whose data library obf_lib must obfuscate.
 <br> <br>
-With the inpout above, library obf_lib woud return a bytestream version of file file1.csv but with the PII data obfuscated as '***'.
+With the input above, function obfuscate() of library obf_lib woud return a bytestream version of file file1.csv but with the PII data obfuscated as '***'.
 <br> <br> <br>
 
 
@@ -38,19 +39,18 @@ With the inpout above, library obf_lib woud return a bytestream version of file 
 This project includes the following main directories:
  - __obf_lib__ <br> this contains the code of library obf_lib. This directory contains module main.py, which contains function obfuscate(). A user of this library will import only function obfuscate() from this library  (see __Setup and use__ below).<br>
 
-   Function obfuscate() calls several utility functions, all of which reside in modules in directory obf_lib. Each utility function resides in a module of the same name, for example function process_csv() resides in module process_csv.py. <br> <br>
-   This is the only directory of interest to the user of the library and does not require any other directory in this project to run (see __Setup and use__ below). <br> <br>
-   None of the code in library obf_lib (nor any other files in this project) contains any credentials. 
+   Function obfuscate() calls several utility functions, all of which reside in modules in directory obf_lib. Each module declares one function that has the same name as the module, for example module process_csv.py declares function process_csv(). <br> <br>
+   This is the only directory of interest to the consumer of library obf_lib. Library obf_lib requires no other directory in this project to run (see __Setup and use__ below). <br> <br>
 
-   <br><br>
 
- - __tests__ <br> this contains test_\*.py files, where '\*' is the name of a function of library obf_lib to test. An example file is test_process_csv.py, which contains the tests for the function process_csv().
+ - __tests__ <br> this contains test_\*.py files, where '*' is the name of a function of library obf_lib on whose code third-party tool pytest can perform unit tests and, in one case, an integration test. An example file is test_process_csv.py, which contains the unit tests to perform on function process_csv().
  <br><br>
 
- - __requirements_tests__ <br> this contains various directories and files that allow this project to determine the run time of library obf_lib and to demonstrate the operation of library obf_lib in the command line.
- <br><br><br>
+ - __requirements_tests__ <br> this contains various directories and files that allowed the author of this project to determine the run time of library obf_lib and to demonstrate the operation of library obf_lib in the command line.
+ <br><br>
 
-
+None of the code in library obf_lib (nor any other files in this project) contains any credentials. 
+<br><br><br>
 
 ## Author
 - Mukund Pandit <br>  __email__: mukund.panditman@googlemail.com
@@ -61,22 +61,22 @@ This project includes the following main directories:
 
 ## Setup and use
 
-Instructions for setup and use of this library:  <br>
+Instructions for setup and use of library obf_lib:  <br>
 - clone this GitHub repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
 - on your local machine find directory obf_lib in the cloned project and copy that directory into your project. 
-- for use of the library on a local machine (rather than in a Lambda function in AWS) install boto3 by running this in the command line:
+- for use of the library on a local machine (rather than in a Lambda function in AWS) install boto3 by running this in the command line: <br>
 ```pip install boto3``` 
 - import function obfuscate() of library obf_lib into any module in your project, like this:
   <br>
 ```
-from <relative.path.to.directory.obf_lib> import obfuscate
+from <path.to.directory.obf_lib> import obfuscate
 ```
 <br>
 
-Example use of the library in a Python module of your project (perhaps a handler for an AWS Lambda function):
+Example use of library obf_lib in a Python module of your project (perhaps a module that declares a handler for an AWS Lambda function):
 ```
 import json
-from <relative.path.to.directory.obf_lib> import obfuscate
+from <path.to.directory.obf_lib> import obfuscate
 
 # below: 
 # use the name of your S3 bucket instead of 'bucket_name_here' 
@@ -85,6 +85,7 @@ from <relative.path.to.directory.obf_lib> import obfuscate
 json_input = json.dumps( {'file_to_obfuscate': 's3://bucket_name_here/key_name/file.csv', '
 						 pii_fields': ["name", "email"]})
 
+# below:
 # obf_byte_stream below contains a byte stream 
 # version of file file.csv but with data under 
 # the fields 'name' and 'email' obfuscated with '***':
@@ -104,7 +105,7 @@ obf_byte_stream = obfuscate(json_input)
  - Code: Python 3.13.2 (but see __Compatibility with Python versions__ below)
  - Python standard library modules: json, io, csv, os 
  - Third-party Python module: boto3 
- - Python standard library testing modules: unittest
+ - Python standard library testing module: unittest
  - Third-party Python testing modules: pytest, moto 
  - Python standard library modules used in demonstration module run_obfuscate.py: random, sys
   <br><br><br>
@@ -134,7 +135,7 @@ Tool __tox__ showed that the code is compatible with the following stable versio
 
 - clone this GitHub repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project <br>
 - from the command line navigate to the top-most directory of the cloned project  <br>
-- install modules moto and pytest by running the following in the command line:  <br>
+- install modules moto and pytest by running the following commands successively in the command line:  <br>
 ```pip install pytest``` 
 and   <br> 
 ```pip install moto```  <br>
@@ -147,7 +148,7 @@ and   <br>
 
 ### Test coverage <br>
 
-Running command-line tool __coverage__ and generating a report produced the following output, which shows that on average the tests have covered 97% of the code in this project (greater than the 90% industry-standard for coverage). Here is the output:
+Running command-line tool __coverage__ and using it to generate a report to show how much of the code in library obf_lib the tests covered produced the output shown below. The output shows that on average the tests have covered 97% of the code in this project (greater than the 90% industry-standard for coverage):
 
 ```
 Name                                       Stmts   Miss  Cover   Missing
@@ -183,7 +184,7 @@ The modules that show less than the industry-standard 90% coverage are: <br>
  - obf_lib/deal_with_json.py  <br>
  - obf_lib/deal_with_parquet.py  <br>
  - obf_lib/process_json.py   <br>
-These modules contain only stubbs of functions as they are not required for the MVP. <br><br>
+These modules contain only stubbs of functions as they are not required for the MVP and are not used in library obf_lib. <br><br>
  - tests/test_get_file.py and tests/test_make_csv_reader_and_writer.py. <br> 
 These are test files used by command-line tool pytest and their less-than-90% coverage figures are of no consequence.<br>
 
@@ -198,22 +199,24 @@ These are test files used by command-line tool pytest and their less-than-90% co
 
 ### Static code analysis: <br>
 
-Running command-line tool __bandit__ recursively on directory __obf_lib__ showed that the code has no security issues at any severity level and nothing that __bandit__ suspected might be insecure.<br>
+Running command-line tool __bandit__ (a static security scanner) recursively on directory __obf_lib__ showed that the code has no security issues at any severity level and nothing that __bandit__ suspected might be insecure.<br>
 
 This is the output of  __bandit__: <br>
 ```
+
+(venv) ➜  GDPR-project-sept-oct-25 git:(main) ✗ bandit -r obf_lib
 [main]  INFO    profile include tests: None
 [main]  INFO    profile exclude tests: None
 [main]  INFO    cli include tests: None
 [main]  INFO    cli exclude tests: None
 [main]  INFO    running on Python 3.13.2
-Run started:2025-10-08 14:22:01.582822
+Run started:2025-10-17 13:31:27.397678
 
 Test results:
         No issues identified.
 
 Code scanned:
-        Total lines of code: 306
+        Total lines of code: 315
         Total lines skipped (#nosec): 0
 
 Run metrics:
@@ -236,7 +239,7 @@ Files skipped (0):
 <br> 
 
 ## PEP8 compliance <br>
-This project ran command-line tool __black__ recursively on directory obf_lib to ensure PEP8 compliance of the code in library obf_lib. <br>
+This project ran command-line tool __black__ recursively on directory obf_lib to ensure PEP8 compliance of the code in it. <br>
 This project also ran command-line tool __flake8__ to test for <br>
 
  - consistency of code style
@@ -247,23 +250,24 @@ This project also ran command-line tool __flake8__ to test for <br>
 The ouput of flake8 follows: <br> 
 
 ```
+(venv) ➜  GDPR-project-sept-oct-25 git:(main) ✗ flake8 obf_lib
 obf_lib/__init__.py:1:1: F401 '.main.obfuscate' imported but unused
-obf_lib/deal_with_json.py:1:1: F401 'obf_lib.get_file.get_file' imported but unused
-obf_lib/deal_with_json.py:2:1: F401 'obf_lib.process_json.process_json' imported but unused
-obf_lib/deal_with_parquet.py:1:1: F401 'obf_lib.get_file.get_file' imported but unused
+obf_lib/deal_with_json.py:1:1: F401 '.get_file.get_file' imported but unused
+obf_lib/deal_with_json.py:2:1: F401 '.process_json.process_json' imported but unused
+obf_lib/deal_with_parquet.py:1:1: F401 '.get_file.get_file' imported but unused
 ```  
 <br> 
 Explanation of why the flake8 warnings are not of concern: <br>
 
-- module obf_lib/_ _init _ _.py must import main.obfuscate to allow the library to be used as a library. The module is not meant to employ function main.obfuscate.  
-- modules obf_lib/deal_with_json.py and obf_lib/deal_with_parquet.py contain only stubbs of functions. Library obf_lib does not employ those functions and those functions are not part of the MVP.
+- module ```obf_lib/__init__.py``` must import function main.obfuscate to allow the library to be used as a library. This module is not meant to employ function main.obfuscate.  
+- modules ```obf_lib/deal_with_json.py``` and ```obf_lib/deal_with_parquet.py``` contain only stubbs of functions. Library obf_lib does not employ those functions and those functions are not part of the MVP.
 
 <br><br>
 
 
 ## Meeting file size/runtime requirements<br>
 
-Library obf_lib must be able to handle files of size up to 1MB with a runtime of less than 1minute. <br>
+Library obf_lib must be able to handle files of size up to 1Mb with a runtime of less than 1minute. <br>
 
 To test that library obf_lib met this requirement this project emplyed an Amazon Web Services (AWS) lambda function to call library obf_lib and to measure the duration of the lambda function.
 
@@ -335,17 +339,19 @@ To use the command line to demonstrate the use of library obf_lib, this project 
 To run the demonstration of the operation of library obf_lib from the command line do this:  <br>
 
  - clone this GitHub repository to your local machine: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
+ - in the command line navigate to the topmost directory of the project just cloned
+ - in the command line set the PYTHONPATH environment variable to that directory, like this: <br>
+```
+export PYTHONPATH=$(pwd)
+``` 
  - create an ingestion S3 bucket in an AWS account
  - ensure that the AWS account or entity has the correct permissions to allow S3 bucket read operations
  - ensure that your AWS credentials on your local machine are correct
- - ensure that the ingestion bucket contains a .csv file saved under a known key. The file will contain headers and rows of data beneath those headers 
+ - ensure that the ingestion bucket contains a .csv file saved under a known key. The file should contain headers and at least 10 rows of data beneath those headers 
  - change the contents of file input.json so that the value of the key "file_to_obfuscate" is a boto3 path to the .csv file in your S3 bucket. 
  - change the contents of file input.json so that the value of the key "pii_fields" is a list of the fields whose data you want to obfuscate
- - in the command line navigate to directory requirements-tests and run this command: <br>
- ```
-         python run_obfuscate.py input.json
- ```
- - module run_obfuscate.py calls library obf_lib's function obfuscate() and shows its output in the command line. The display shows the headers and 10 randomly selected rows of the bytestream output of function obfuscate() 
+ - in the command line navigate to directory requirements-tests and run ```python run_obfuscate.py input.json```
+ - module run_obfuscate.py calls library obf_lib's function obfuscate() and shows its output in the command line. The display shows the headers and 10 randomly selected rows of the bytestream returned by function obfuscate() 
  - you can change the PII fields in input.json and run ```python run_obfuscate.py input.json``` again to get a different output in the command line demonstration in which the new fields have their data obfuscated.
 
 <br><br>
@@ -367,11 +373,24 @@ Here is a screenshot of a typical output of the demonstration:
 ## Addendum  <br>
  This project tests that library obf_lib meets the requirement of having a run time of under 1 minute when working with a .csv file of up to 1Mb in size. <br>
 
- The test required this project to take the following four steps: <br>
+ To recreate and perform the test the user must:
+ - clone this repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
+ - in the command line navigate to the topmost directory of the project just cloned
+ - in the command line set the PYTHONPATH environment variable to that directory, like this: <br>
+```
+export PYTHONPATH=$(pwd)
+``` 
+<br>
+
+ - ensure you have an AWS account 
+ - ensure the AWS account or entity has the correct permissions to allow S3 bucket read operations
+ - ensure the AWS credentials on your local machine are correct
+
+
+ Then perform these four steps: <br>
  
  ## Step 1
- create a 1Mb file called file1.csv and put it in directory __terraform__.<br>
- File file1.csv contains a table consisting of these headers: <br>
+ Look at file1.csv in directory __requirements-tests/terraform__. It contains a table consisting of these headers: <br>
  __name__, <br> 
  __email_address__, <br> 
  __age__,  <br> 
@@ -379,20 +398,20 @@ Here is a screenshot of a typical output of the demonstration:
  __weight__<br>
  and has about 24000 rows of data (random text and numbers) under those headers. <br><br> 
 
-To create the 1Mb .csv file this project included empty file file1.csv in directory data then ran the following in the command line after navigating to the top-most directory of this project:
-```
-python requirements-tests/make_1Mb_csv_file/populate_csv_file  
-```  	
-<br>
-The command above put the headers and data into file data/file.csv.
+
 <br><br>
 
 ## Step 2
- copy file file1.csv from directory requirements-tests/data to directory requirements-tests/terraform. 
- <br><br>
+change the names of all S3 buckets provisioned in file requirements-tests/terraform/main.tf. File main.tf provisions three S3 buckets: <br>
+ - a bucket for Terraform state
+ - a bucket in which will reside the lambda handler and its associated modules (actually just the library obf_lib) in zipped form 
+ - an ingestion bucket containing file1.csv under the key new_data/file1.csv. <br><br> 
+also change all references to those buckets in other Terraform resources in main.tf.  
+<br><br>
 
- ## Step 3
- provision infrastructure in an AWS account by navigating to directory requirements-tests/terraform in the command line and running the following commands successively: <br>
+
+## Step 3
+ install the infrastructure in the AWS account by navigating in the command line to directory requirements-tests/terraform and running the following commands successively: <br>
  ```
  terraform init
  ```
@@ -403,16 +422,16 @@ terraform plan
  terraform  apply
  ```
 
-This created the following infrastructure in the AWS account:<br>
+This will create the following infrastructure in the AWS account:<br>
 _i_ -- a Lambda function <br> 
 _ii_ -- an S3 bucket to contain a terraform state file <br> 
-_iii_ -- an S3 ingestion bucket <br> 
-_iv_ -- an S3 bucket to contain a lambda handler and its associated modules (actually just the library obf_lib) in zipped form. When running, the lambda handler calls library obf_lib, allowing this project to determine the run time of the library. The idea is that if the lambda handler, which calls library obf_lib, shows a run time of less than 1 minute, the library obf_lib by itself would also have a run time of less than 1 minute. The lambda handler also prints a randomly selected row of the bytestream output of function obfuscate() of library obf_lib.   <br> 
-_v_ -- the Lambda function that will run the lambda handler (found in module requirements-test/lambda_handler.py). <br>
+_iii_ -- an S3 ingestion bucket containing file1.csv under the key new_data/file1.csv<br> 
+_iv_ -- an S3 bucket to contain a lambda handler and its associated modules (actually just the library obf_lib) in zipped form.  <br> 
+_v_ -- the Lambda function that will run the lambda handler (found in module requirements-test/lambda_handler.py). When running, the lambda handler calls function obfuscate() of library obf_lib, allowing this project to determine the run time of the library. The idea is that if the lambda handler shows a run time of less than 1 minute, the library obf_lib by itself would have a run time of less than 1 minute. The lambda handler also prints a randomly selected row of the bytestream output of function obfuscate() of library obf_lib.  <br>
  <br>
  
  ## Step 4
- test run the lambda function (and hence the code in library obf_lib) in the AWS Lambda service 10 times to get and average value for the duration of the lambda function (and hence the duration of code in library obf_lib).  <br>
+ Log in to AWS in the AWS console. Navigate to the Lambda service and manually trigger a test run of the lambda function. Then read the report the AWS service produces there. It will contain information about the duration of the lambda function.  <br>
  
  
 

@@ -18,20 +18,20 @@ def obfuscate(input):
         modified file as a byte stream.
 
     Args:
-        input: can be either a dictionary or a 
-          json string as long as it has these 
+        input: can be either a dictionary or a
+          json string as long as it has these
           two keys:
               1) "file_to_obfuscate". The value of
                 this key is a string that represents
-                the path to the file that contains 
-                the data (among which is the data 
-                to obfuscate). The path must take 
+                the path to the file that contains
+                the data (among which is the data
+                to obfuscate). The path must take
                 this form:
                 "s3://my_ingestion_bucket/new_data/file1.csv",
-                where 'my_ingestion_bucket' is the 
-                name of the S3 ingestion bucket and 
-                "new_data/file1.csv" is the keey 
-                under which the bucket stores file 
+                where 'my_ingestion_bucket' is the
+                name of the S3 ingestion bucket and
+                "new_data/file1.csv" is the keey
+                under which the bucket stores file
                 file1.csv
               2) "pii_fields": the value of this key
                 is a list of strings, each string
