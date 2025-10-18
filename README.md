@@ -63,7 +63,7 @@ None of the code in library obf_lib (nor any other files in this project) contai
 
 Instructions for setup and use of library obf_lib:  <br>
 - clone this GitHub repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project
-- on your local machine find directory obf_lib in the cloned project and copy that directory into your project. 
+- on your local machine find directory obf_lib in the cloned project and copy and paste that directory into your project. 
 - for use of the library on a local machine (rather than in a Lambda function in AWS) install boto3 by running this in the command line: <br>
 ```pip install boto3``` 
 - import function obfuscate() of library obf_lib into any module in your project, like this:
@@ -108,6 +108,8 @@ obf_byte_stream = obfuscate(json_input)
  - Python standard library testing module: unittest
  - Third-party Python testing modules: pytest, moto 
  - Python standard library modules used in demonstration module run_obfuscate.py: random, sys
+ - Used in determining the run time of library obf_lib: Terraform and Amazom Web Serivces services
+ - Used in deomnstrating the operation of library obf_lib: Amazom Web Serivces services
   <br><br><br>
 
 
@@ -135,6 +137,12 @@ Tool __tox__ showed that the code is compatible with the following stable versio
 
 - clone this GitHub repository: https://github.com/emjeepee/Northcoders-GDPR-obfuscation-project <br>
 - from the command line navigate to the top-most directory of the cloned project  <br>
+- set  environment variable PYTHONPATH to the topmost directory of the cloned project like this: <br>
+```
+export PYTHONPATH=$(pwd)
+```
+<br>
+
 - install modules moto and pytest by running the following commands successively in the command line:  <br>
 ```pip install pytest``` 
 and   <br> 
@@ -148,34 +156,33 @@ and   <br>
 
 ### Test coverage <br>
 
-Running command-line tool __coverage__ and using it to generate a report to show how much of the code in library obf_lib the tests covered produced the output shown below. The output shows that on average the tests have covered 97% of the code in this project (greater than the 90% industry-standard for coverage):
+This project ran command-line tool __coverage__ like this: <br>
+```coverage run --source=obf_lib -m pytest```  <br>
+to determine how much of the code in library obf_lib the tests covered. <br>
+This project then produced a report of the result of running __coverage__ by running this in the command line: <br>
+```coverage report -m``` <br>
+The report, below, shows that on average the tests covered 93% of the code in this project (greater than the 90% industry-standard for coverage):
 
 ```
-Name                                       Stmts   Miss  Cover   Missing
-------------------------------------------------------------------------
-obf_lib/__init__.py                            1      0   100%
-obf_lib/deal_with_csv.py                       8      0   100%
-obf_lib/deal_with_json.py                      4      1    75%   30
-obf_lib/deal_with_parquet.py                   3      1    67%   29
-obf_lib/find_input_type.py                     6      0   100%
-obf_lib/func_lookup.py                         4      0   100%
-obf_lib/get_file.py                            6      0   100%
-obf_lib/get_key_and_bucket_name.py             5      0   100%
-obf_lib/main.py                               11      0   100%
-obf_lib/make_csv_reader_and_writer.py          9      0   100%
-obf_lib/process_csv.py                         7      0   100%
-obf_lib/process_json.py                        2      1    50%   20
-obf_lib/return_data_type.py                    4      0   100%
-tests/test_deal_with_csv.py                   20      0   100%
-tests/test_find_input_type.py                 14      0   100%
-tests/test_get_file.py                        35      5    86%   14-18
-tests/test_get_key_and_bucket_name.py         26      0   100%
-tests/test_make_csv_reader_and_writer.py      33      1    97%   22
-tests/test_obfuscate.py                       38      0   100%
-tests/test_process_csv.py                     35      0   100%
-tests/test_return_data_type.py                36      0   100%
-------------------------------------------------------------------------
-TOTAL                                        307      9    97%
+(venv) ➜  GDPR-project-sept-oct-25 git:(main) ✗ coverage report -m
+Name                                    Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------
+obf_lib/__init__.py                         1      0   100%
+obf_lib/deal_with_csv.py                    8      0   100%
+obf_lib/deal_with_json.py                   4      1    75%   30
+obf_lib/deal_with_parquet.py                3      1    67%   29
+obf_lib/find_input_type.py                  6      0   100%
+obf_lib/func_lookup.py                      4      0   100%
+obf_lib/get_file.py                         6      0   100%
+obf_lib/get_key_and_bucket_name.py          5      0   100%
+obf_lib/main.py                            11      0   100%
+obf_lib/make_csv_reader_and_writer.py       9      0   100%
+obf_lib/process_csv.py                      7      0   100%
+obf_lib/process_json.py                     2      1    50%   20
+obf_lib/process_parquet.py                  2      2     0%   1-20
+obf_lib/return_data_type.py                 4      0   100%
+---------------------------------------------------------------------
+TOTAL                                      72      5    93%
 
 ```
 <br>
@@ -184,9 +191,10 @@ The modules that show less than the industry-standard 90% coverage are: <br>
  - obf_lib/deal_with_json.py  <br>
  - obf_lib/deal_with_parquet.py  <br>
  - obf_lib/process_json.py   <br>
-These modules contain only stubbs of functions as they are not required for the MVP and are not used in library obf_lib. <br><br>
- - tests/test_get_file.py and tests/test_make_csv_reader_and_writer.py. <br> 
-These are test files used by command-line tool pytest and their less-than-90% coverage figures are of no consequence.<br>
+ - obf_lib/process_parquet.py <br>
+
+These modules contain only stubbs of functions as they are not required for the MVP. Library obf_lib makes no use of these modules.
+
 
 
   <br><br><br>
@@ -260,7 +268,7 @@ obf_lib/deal_with_parquet.py:1:1: F401 '.get_file.get_file' imported but unused
 Explanation of why the flake8 warnings are not of concern: <br>
 
 - module ```obf_lib/__init__.py``` must import function main.obfuscate to allow the library to be used as a library. This module is not meant to employ function main.obfuscate.  
-- modules ```obf_lib/deal_with_json.py``` and ```obf_lib/deal_with_parquet.py``` contain only stubbs of functions. Library obf_lib does not employ those functions and those functions are not part of the MVP.
+- modules ```obf_lib/deal_with_json.py``` and ```obf_lib/deal_with_parquet.py``` contain only stubbs of functions. Library obf_lib does not employ those modules and they are not part of the MVP.
 
 <br><br>
 
@@ -329,7 +337,7 @@ This showed the size to be 324K, well below the 250Mb maximum value below which 
 <br> <br> <br>
 
 
-## Demonstration of operation of obf_lib via the command line <br>
+## Demonstration of library obf_lib via command line <br>
 
 To use the command line to demonstrate the use of library obf_lib, this project employed the following files in directory requirements-tests: <br>
  - input.json, which contains json of the kind function obfuscate() of library obf_lib requires as argument
